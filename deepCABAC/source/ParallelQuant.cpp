@@ -117,7 +117,6 @@ void* quantize_blocks_pthread_worker_atomic(void* arg) {
 }
 
 
-// --- FUNÇÃO ORQUESTRADORA PTHREADS (COM CORREÇÕES) ---
 py::list quantize_all_blocks_parallel_pthreads(py::list py_block_info_list) {
 
     // 1. Extrair informações do Python
@@ -170,7 +169,6 @@ py::list quantize_all_blocks_parallel_pthreads(py::list py_block_info_list) {
     std::vector<ThreadWorkerDataAtomic> thread_worker_data(num_threads);
     std::atomic<int> next_block_idx(0);
     std::vector<std::vector<int>> block_indices_per_thread(num_threads);
-    // *** CORREÇÃO: Vetor para rastrear sucesso da criação ***
     std::vector<bool> thread_launched_successfully(num_threads, false); 
     py::gil_scoped_release release_gil;
 
@@ -216,4 +214,5 @@ py::list quantize_all_blocks_parallel_pthreads(py::list py_block_info_list) {
         py_results.append(result_dict);
     }
     return py_results;
+
 }
