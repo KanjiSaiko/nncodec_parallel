@@ -71,13 +71,8 @@ def approx(approx_info, model_info, approx_data_in):
     for result_dict in cpp_results:
         param = result_dict['param_name']
         final_qp = result_dict['final_qp']
-        
-        # --- ADICIONE ESTA LINHA ---
-        final_dq_flag = result_dict['dq_flag'] # Pega o dq_flag retornado pelo C++
-        # --- FIM DA LINHA ADICIONADA ---
 
-        # O array 'quantizedValues' em output_qindex_arrays[param] 
-        # já foi modificado IN-PLACE pelo C++!
+        final_dq_flag = result_dict['dq_flag'] # Pega o dq_flag retornado pelo C++
         
         original_qp = approx_info['qp'][param]
         if final_qp != original_qp:
@@ -88,9 +83,7 @@ def approx(approx_info, model_info, approx_data_in):
         approx_data_out['parameters'][param] = output_qindex_arrays[param] # Usa o array que foi modificado
         approx_data_out['approx_method'][param] = 'uniform'
         
-        # --- ADICIONE ESTA LINHA ---
         approx_data_out['dq_flag'][param] = final_dq_flag # Atualiza o dicionário dq_flag
-        # --- FIM DA LINHA ADICIONADA ---
 
     print("Todos os resultados foram coletados.")
     return approx_data_out
@@ -103,5 +96,6 @@ def rec(param, approx_data):
 
     approx_data["parameters"][param] = np.zeros(values.shape, dtype=np.float32)
     decoder.dequantLayer(approx_data["parameters"][param], values, approx_data["qp_density"], approx_data["qp"][param], approx_data['scan_order'].get(param, 0))
+
 
     del approx_data["approx_method"][param]
